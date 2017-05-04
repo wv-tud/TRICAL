@@ -189,6 +189,7 @@ float measurement[3]) {
         #pragma MUST_ITERATE(9, 9);
         for (k = col, l = 0; l < TRICAL_STATE_DIM; k++, l++) {
             temp_sigma[l] = state[l] + covariance_llt[k];
+            __asm__ __volatile__("");
         }
         measurement_estimates[i + 1] =
             _trical_measurement_reduce(temp_sigma, measurement);
@@ -197,6 +198,7 @@ float measurement[3]) {
         #pragma MUST_ITERATE(9, 9);
         for (k = col, l = 0; l < TRICAL_STATE_DIM; k++, l++) {
             temp_sigma[l] = state[l] - covariance_llt[k];
+            __asm__ __volatile__("");
         }
         measurement_estimates[i + 1 + TRICAL_STATE_DIM] =
             _trical_measurement_reduce(temp_sigma, measurement);
@@ -225,6 +227,7 @@ float measurement[3]) {
 
         temp = measurement_estimates[i] * measurement_estimates[i];
         measurement_estimate_covariance += temp;
+        __asm__ __volatile__("");
     }
 
     _print_matrix("Measurement estimates:\n", measurement_estimates, 1,
@@ -262,6 +265,7 @@ float measurement[3]) {
             temp = measurement_estimates[i + 1 + TRICAL_STATE_DIM] *
                 (state[j] - covariance_llt[i * TRICAL_STATE_DIM + j]);
             cross_correlation[j] += temp;
+            __asm__ __volatile__("");
         }
     }
 
@@ -273,6 +277,7 @@ float measurement[3]) {
     for (j = 0; j < TRICAL_STATE_DIM; j++) {
         temp = TRICAL_SIGMA_WC0 * measurement_estimates[0] * state[j];
         cross_correlation[j] = TRICAL_SIGMA_WCI * cross_correlation[j] + temp;
+        __asm__ __volatile__("");
     }
 
     _print_matrix("Cross-correlation:\n", cross_correlation, 1,
@@ -288,6 +293,7 @@ float measurement[3]) {
     for (i = 0; i < TRICAL_STATE_DIM; i++) {
         kalman_gain = cross_correlation[i] * temp;
         state[i] += kalman_gain * innovation;
+        __asm__ __volatile__("");
     }
 
     _print_matrix("State:\n", state, 1, TRICAL_STATE_DIM);
@@ -314,6 +320,7 @@ float measurement[3]) {
         for (j = 0; j < TRICAL_STATE_DIM; j++) {
             covariance[i * TRICAL_STATE_DIM + j] +=
                 temp * cross_correlation[j];
+            __asm__ __volatile__("");
         }
     }
 
