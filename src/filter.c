@@ -110,9 +110,15 @@ float _trical_measurement_reduce(float state[TRICAL_STATE_DIM], float
 measurement[3], float field[3]) {
     float temp[3];
     _trical_measurement_calibrate(state, measurement, temp);
-
+#if TRICAL_FULL_3X3
+#warning 'Using Full 3X3 TRICAL'
     return fsqrt(fabs(temp[X] * field[X] + temp[Y] * field[Y] +
                       temp[Z] * field[Z]));
+#else
+#warning 'Using normative TRICAL'
+    return fsqrt(fabs(temp[X] * temp[X] + temp[Y] * temp[Y] +
+                          temp[Z] * temp[Z]));
+#endif
 }
 
 /*
