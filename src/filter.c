@@ -28,6 +28,7 @@ SOFTWARE.
 #include "TRICAL.h"
 #include "filter.h"
 #include "3dmath.h"
+#include "modules/calibration/mag_calib_ukf.h"
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -110,15 +111,13 @@ float _trical_measurement_reduce(float state[TRICAL_STATE_DIM], float
 measurement[3], float field[3]) {
     float temp[3];
     _trical_measurement_calibrate(state, measurement, temp);
-#if MAG_CALIB_UKF_FULL_3X3
-#warning 'Using Full 3X3 TRICAL'
-    return fsqrt(fabs(temp[X] * field[X] + temp[Y] * field[Y] +
+    if(mag_calib_ukf_full_3x3){
+      return fsqrt(fabs(temp[X] * field[X] + temp[Y] * field[Y] +
                       temp[Z] * field[Z]));
-#else
-#warning 'Using normative TRICAL'
-    return fsqrt(fabs(temp[X] * temp[X] + temp[Y] * temp[Y] +
+    }else{
+      return fsqrt(fabs(temp[X] * temp[X] + temp[Y] * temp[Y] +
                           temp[Z] * temp[Z]));
-#endif
+    }
 }
 
 /*
