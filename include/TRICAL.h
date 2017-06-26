@@ -27,10 +27,6 @@ SOFTWARE.
 extern "C" {
 #endif
 
-#ifndef TRICAL_FULL_3X3
-#define TRICAL_FULL_3X3 0
-#endif
-
 #define TRICAL_STATE_DIM 12
 
 typedef struct {
